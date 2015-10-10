@@ -1,0 +1,454 @@
+# DEVIEW 2015
+
+## Developing Android Libraries: Lessons from Realm
+- Realm is a mobile db
+    - zero-copy object store
+        - no copy in memory, store only in db
+    - faster raw SQLite
+    - multiplatform (Android, iOS, Wearables)
+    - has an ORM-like API
+        - treats data like object
+        - not exactly ORM, not a layer on top of database
+    - has its own C++ core
+    - is designed for mobile, constrained environment
+    - has Korean documentation and support!
+- Why would you write a library?
+    - Modularity
+    - Reusability
+    - Shareability (share with others)
+- How to write a new library project?
+    - From Android Studio 
+        - Android Studio doesn’t allow you to create library project
+        - Steps
+            - Create a new Application project
+            - Add library module
+            - Remove application project
+    - From the command line
+- Solutions
+    - API Design
+        - Has to be easy to learn
+        - Easy to use, even without documentation
+            - choose names carefully
+        - Has to be hard to misuse, use wrong
+        - Has to be easy to read and maintain code that uses it
+        - power full enough to satisfy requirements
+        - Easy to extend
+        - Appropriate to audience (choose audience)
+        - Effective Java 2 by Joshua Bloch
+        - How to design a good api and why it matters by Joshua Bloch
+        - compact vs. expressive
+        - familiar vs allows to save multiple objects in one transaction
+    - Testing
+        - VERY IMPORTANT
+            -  you have no idea how your customers use your library
+        - Prefer JUNIT4 over JUNIT3
+            - parametric test
+        - Automate all the things
+            - Let Jenkins become your best friend
+            - Useful Jenkins plugins
+                - Job config history
+                    - See who changed config
+                - Git
+                - Android Emulator
+                    - Do more than just emulation
+                - Matrix Job
+                - Junit
+    - Write Sample Apps
+        - Additional integration tests
+        - Showcase how to use your library
+        - Validate your core principles
+    - JAR OR AAR?
+        - Do you want to support eclipse?
+            - Eclipse doesn’t support AAR
+        - Recommend AAR
+    - Where to publish?
+        - Bintray (don’t use maven central)
+        - How to produce a source jar
+            - easy with grade
+        - How to produce a Javadoc jar
+            - gradle
+        - Binary provides a Gradle plugin
+    - Introspection is slow
+        - Solution: Annotation processing
+        - Pros
+            - Allows you to write new Java files
+            - It happens at compilation time
+        - Cons
+            - Doesn’t allow to modify existing code
+            - Not very easy to use
+        - Cool libraries use it!
+            - Dagger, Butter Knife, AutoValue/AutoParcel, Realm
+        - Android does not include the package for annotation processing
+            - Workaround
+                - annotation (used both by the library and the processor)
+                - annotations processor
+    - Bytecode weaving
+        - Modify class file manually
+        - Pros
+            - Allows to modify existing code
+            - Easier to use compared to annotation processing
+        - Cons
+            - Really need to know what you are doing
+            - Might look weird in the debugger
+        - Tool
+            - These are for class files, so need to be done before dexing
+            - Javassist
+            - ASM
+            - AspectJ
+            - Stephen Nicholas’ inspects
+        - RealmObject
+    - Native Code
+        - C/C++
+        - Android gradle plugin doesn’t support NDK anymore
+        - Google is developing new plugin for NDK (experimental)
+            - DSL is slightly different
+            - See documentation
+            - limitation: no support for creating and depending on static libraries
+
+## Quality without QA
+- Steps
+    - Automated tests (fast & cheap)
+    - Code review
+    - Dogfooding
+    - manual QA (slow and/or expensive)
+- Git
+    - Branching workflow (e.g. feature/JIRA-123)
+        - isolated feature work
+        - stable master branch
+        - Merge is blocked until
+            - CI builds passing?
+            - at least 2 reviewers approved?
+            - all rework complete?
+        - atlassian.com/git
+- Automated Tests
+    - tinyurl.com/superci
+- Code review
+    - Technical debt, bad algorithm, bad API decision don’t produce red build
+    - Better code, knowledge sharing, team ownership
+    - “John broke it, but I can fix it. I’ve seen it”
+    - Tips for pull request
+        - One issue, on pull request
+        - Minimum two approvals before merge
+        - Have 1.5x - 2.5x that number reviewers
+        - Use git blame / git guilt to find reviewers
+        - Avoid flamewars
+            - Two opinionated review fight -> negotiate or escalate to boss
+        - Stuck in review?
+            - All of your requests are stuck in review!
+            - Make Tuesday & Thursday inbox(review) zero days
+        - @Mention specialists
+        - Raise issues for TODOs
+            - // TODO fix this hack [X}
+            - // TODO fix this (JRA-1773) [O]
+        - Move comments into code
+            - Write PR comment to code or refactor it
+        - Build a team policy, as a team and enforce it
+- Dogfooding
+    - Use software before customers do
+    - Continuous deployment
+        - deploy master branch to dogfooding(staging) server
+        - Extreme dogfooding
+            - migrate dogfooding server to the most hospitable environment (에러 가장 잘 날거 같은 환경)
+- Manual QA
+    - What does QA do?
+        - QA leadership
+        - Train developers how to write better code
+        - Feature kick-offs
+            - Explain and discuss feature in the meeting prior to development
+        - Provide tools
+            - e.g. inject korean characters
+            - VM server for testing
+        - Analysis
+    - tinyurl.com/jiraqa
+
+## Rust 언어
+- Rust 소개
+    - Mozilla Research
+    - 시스템 프로그래밍 언어
+    - 웹 브라우저 개발 시의 요구사항: 성능, 보안
+    - 기존의 웹 브라우저(사파리 크롬 등)은 c++로 구현
+    - c++처럼 오버헤드 없는 추상화, gc없는 메모리 관리
+    - c++와 달리 메모리 안전성, 쓰레드 안전성 보장
+- 메모리 안전성
+    - 쉬운 문제 (해결이 쉽다)
+        - 초기화 되지 않는 메모리
+            - 사용할 수 없다, 컴파일러가 검사
+        - 널 포인터
+            - 없다.
+            - T* 대신 Option<&T>
+            - &T(T의 참조)와는 다른 타입
+            - Option은 역참조할 수 없음
+        - 배열 인덱스
+            - 검사함
+    - 어려운 문제
+        - 메모리 관리
+            - 소유권: 할당된 메모리를 해제할 권리. 이름에 속한다. 이전할 수 있다.
+        - 무효화
+- 쓰레드 안전성
+- 미래
+    - 하위호환성 보장
+    - rust-kr.org
+
+## How Riot Works
+- 조직의 종류
+    - 혼돈의 조직
+        - 모두가 바쁘다
+        - 완료되는 일은 없다
+        - 헤매는 시간이 많다
+        - 질문에 답하느라 일할 시간이 없다
+    - 관리의 조직
+        - 효율적인 업무 프로세스 중시
+        - 관리자가 업무 방식을 관리 및 지시
+        - 관리자가 업무 방식을 분석 및 개선
+        - 관리자가 가장 똑똑한 사람이어야 함
+        - 관리자의, 관리자에 의한, 관리자를 위한
+        - 문제점
+            - 반복적으로 하는 일 떄문에 재미가 없다.
+            - 느리다. 회의의 연속. 중간 단계가 너무 많다
+            - 오해가 난무. 관리자가 위에 커뮤니케이션을 전달하는 형태라 오해가 생기기 쉬움.
+    - 애자일 조직
+        - 사용자가 가장 원하는 기능을 / 제공하여 / 피드백을 받아 / 서비스를 점진적으로 발전시킨다.
+        - 가능한 빠르게
+        - 필수 요소
+            - 높은 품질의 코드를 생산할 수 있는 개발 조직
+            - 사용자 우선순위로 정렬된 기능 목록
+            - 짧은 cycle time
+            - 잦은 피드백
+            - 제약 조건에 스스로 적응
+            - 변경에 맞추어 스스로 조직을 재구성
+            - 지속적으로 변화 및 진화
+- How Riot Works?
+    - 플레이어(고객)의 경험이 최고의 가치
+    - 권한 위임
+        - 실무담당자가 직접 판단
+        - Default trust: 신뢰해야 함
+        - Queue dodge: 신입사원이 마음에 안들면 손 들고 나갈 수 있음
+        - 직위가 아닌 역할과 책임이 필요
+            - 타이틀(직위)가 목표가 아닌 일을 잘하는게 목표가 되어야 함
+            - Business Owner / Product Owner / Tech Lead / Dev Manager(직원의 성장을 도와줌)
+    - 정보의 공유
+        - Ask Me Anything
+        - 메일 수신자의 제약이 없음
+        - 누구나 참석할 수 있는 회의
+        - 참여형 표준
+    - Continuous Improvement
+        - 실수는 배움의 기회
+            - Fail & Tell: 본인의 실패의 경험을 공유
+        - 어떻게 발전할지 스스로 결정
+        - 관습에 저항
+    - Sports team, not a family
+        - 직접적인 피드백
+            - 실명으로
+        - 지속적인 발전
+        - 협업
+- 한국적인 너무나 한국적인
+    - 애자일에 대한 오해
+        - 빠름이 문제가 아님
+    - 그건 내 일이 아닙니다?
+    - 나 관리자야~!!
+- 최종 정리
+    - 좋은 소프트웨어를 만드는 법
+        - 철학을 갖춘 좋은 개발자의 채용 및 성장
+        - 효과적인 협업
+        - 지속적으로 스스로 성장하도록 권한 위임
+        - 썩은 사과 제거
+        - 현재 창출하는 가치에 집중
+
+## 영상 인식을 통한 오프라인 고객 분석 솔루션과 딥러닝
+- Walk Insights: 스마트폰의 무선 신호를 이용한 오프라인 고객 분석 솔루션
+- 오프라인 데이터의 정보화
+- 영상을 이용한 오프라인 고객 분석 솔루션
+    - 장점
+        - 공간에 기반한 분석 (와이파이 신호는 위치를 정확하게 알기 어려움. 현재 1~2m 오차 있음)
+        - 모수 100% 가능
+        - 보안 시장으로의 진출 가능성
+    - 한계
+        - 상업화할 수준의 인식률?
+        - 겹치는 물체의 처리 어려움
+        - 고유 물체 파악 어려움
+    - 한계를 인정하고 워크인사이트와 시너지를 낼 수 있는 방법 고민
+- Heat map
+    - 시간대에 어느 부분에 사람이 몰렸는지 알 수 있음
+- Movement flow
+    - 이동 패턴 알 수 있음
+- Profile
+    - 사람 얼굴을 통해 성별/나이/국적 파악
+- 비전인사이트
+    - 여상을 이용한 분석 + CCTV의 클라우드화
+- Computer vision - Heat map, movement flow
+- Machine Learning - profile analysis
+- 프로필 분석에 딥러닝 적용
+    - Image classification
+    - 고양이 사진 -> 고양이 인식
+    - 기존: Feature + SVM
+    - 최근: Deep learning
+    - Public datasets: IMAGENET by Stanford, FERET for face data set
+- Deep Learning
+    - Neural network
+    - Learning: 에러를 최소화하는 방향으로 가중치를 업데이트하는 과정
+    - Back propagation: 출력층의 에러를 계산하고 반대 방향으로 각 노드가 에러에 미친 정도를 계산하는 방법
+    - Deep learning: 레이어가 많은 인공 신경망을 이용한 머신러닝
+        - 과거
+            - 수많은 가중치 때문에 학습 속도가 너무 오래 걸림
+            - Back propagation이 레이어가 많은 경우 잘 동작하지 않음
+        - 현재
+            - GPU의 발전
+            - DBN, RNN, CNN 등의 모델
+            - 많은 레이어를 가진 모델을 학습할 수 있는 알고리즘
+            - 과적합 문제를 방지하기 위한 알고리즘
+        - Model
+            - 목적에 맞는 모델을 선택적으로 학습
+            - 수학보다는 코드
+                - 남들이 구현한 코드를 돌려보는게 많이 도움됨
+- 적용 이야기
+    - Face detection - Haar Cascade Classifier
+    - Gender/Age/Nationality classification - Convolutional Neural Network (영상 특화 모델)
+    - 성별 분류
+        - Dataset: male 1000, female 1000
+        - Model - Convolutional neural network
+            - Convolution layer
+            - Pooling layer
+            - Feedforward layer
+            - 학습이 안됨.... -> 데이터가 너무 적었음
+        - Fine-tuning
+            - CNN을 ImageNet 데이터셋으로 학습
+            - 마지막 분류 레이어를 타겟 문제에 맞게 변경함
+            - 타겟 데이터셋으로 CNN 모델을 학습 (미세 조정)
+        - Result
+            - 정확도: 97.84%
+            - Iteration 1000번
+            - 학습 시간 42분
+    - 국적 분류
+        - 국적 -> 인종 -> 아시안-비아시안 분류로 문제 축소
+        - Data: Asian 1098개, 비아시안 1098개
+        - Result
+            - 정확도: 91.86%
+            - Iteration 1000번 (1000번은 굉장히 적은거임, Imagenet은 십만번 넘게 돌림)
+            - 학습 시간 42분
+    - 나이 분류
+        - 5분류 문제: 10대 이하, 20대, 30대, 40대, 50대 이상
+        - Data: 10대 이하: 18, 20대: 512, 30대: 362, 40대: 264, 50대 이상: 152
+        - Result
+            - 정확도 52.71%
+            - Iteration 1000번
+            - 학습 시간 42분
+    - Add noise, and you will get the nature
+        - 원본 => Add Noise => Rotated 원본
+        - 노이즈를 섞으면 좀더 본질적인 feature를 찾는다
+        - Result
+            - Default: 52.71%
+            - Rotate: 40% (하락)
+            - Cut: 50.41% (하락)
+            - Blind(일정 영역을 랜덤하게 가림): 60.31% (7.6% 향상)
+            - Blur: 54.21% (1.5% 향상)
+            - Blind + Blur (iteration 11000번): 64.1% (최종 11.39% 성능 향상)
+    - !! 좋은 데이터셋을 모으는 것이 중요함 (많고 라벨 당 데이터가 균질해야 함)
+        - 데이터만 좋다면 MS 못지 않게 가능할 듯
+    - 딥러닝 관련 연구 계획
+        - 지속적인 데이터 수집
+        - 분류 속도 문제
+        - Detection 문제에 적용: R-CNN
+        - 각종 지능형 판단 기술 개발
+
+## JPA와 모던 자바 데이터 저장 기술
+- 계층형 아키텍쳐
+    - 진정한 의미의 계층 분할이 어렵다
+        - 물리적으론 되어있지만 논리적으론 안되어있음
+- SQL에 의존해야 함
+- 패러다임의 불일치 (객체 vs 관계형 DB)
+    - 객체와 관계형 디비의 차이
+        - 상속
+        - 연관관계
+        - 데이터 타입 (참조 vs. 조인)
+        - 데이터 식별 방법
+- 개발자 = SQL 매퍼 ㅋㅋ
+- 각각의 테이블에 따른 조인 SQL 작성, 각각의 객체 생성... 상상만해도 복잡
+- 객체답게 모델링 할수록 매핑 작업만 늘어남
+- 객체를 자바 컬렉션에 저장하듯이 DB에 저장할 수는 없을까?
+- JPA
+    - Java Persistence API
+    - ORM 기술 표준
+        - 객체 관계 매핑
+        - 객체는 객체대로 설계
+        - 관계형 디비는 관계형 디비대로 설계
+        - ORM 프레임워크가 중간에서 매핑
+        - 대중적인 언어는 ORM 존재
+    - EJB (자바 표준) => 하이버네이트 (오픈 소스) => JPA (자바 표준)
+    - JPA: 인터페이스의 모음
+    - 구현체: 하이버네이트 등
+- JPA: 왜 사용해야 하는가?
+    - 생산성
+        - 저장: jpa.persist(member)
+        - 조회: Member member = jpa.find(memberId)
+        - 수정: member.setName()
+        - 삭제: member.remove()
+    - 유지보수
+        - 더이상 내가 SQL을 짜지 않음
+- JPA의 성능 최적화 기능
+    - 1차 캐시와 동일성 보장
+        - 같은 트랜잭션 안에서는 같은 엔티티를 반환 - 약간의 조회 성능 향상
+    - 트랜잭션을 지원하는 쓰기 지연 - INSERT
+        - 트랜잭션을 커밋할 때까지 INSERT SQL을 모음
+        - JDBC Batch SQL 기능을 사용해서 한번에 SQL 전송
+    - 지연 로딩과 즉시 로딩
+        - 지연 로딩: 객체가 실제 사용될 때 로딩
+        - 즉시 로딩: JOIN SQL로 한번에 연관된 객체까지 미리 조회
+        - 비즈니스 상황마다 다르고 옵션으로 선택 가능
+- ORM은 객체와 RDB 두 기둥 위에 있는 기술
+- JPA 기반 프로젝트
+    - Spring Data JPA
+        - 지루하게 반복되는 CRUD 문제를 세련된 방법으로 해결
+        - 개발자는 인터페이스만 작성
+        - 스프링 데이터 JPA가 구현 객체를 동적으로 생성해서 주입
+        - 공통 인터페이스 기능 제공
+        - extends JpaRepository
+        - 메서드 이름으로 쿼리 생성
+            - 추론하여 쿼리 자동 생성
+            - e.g. findByName(String username, Sort sort);
+            - Page<Member> members = findByName(String username, Pageable pageable);
+        - @Query
+        - 반환 타입 e.g. List<Member>
+        - Web 페이징과 정렬 기능
+        - 컨트롤러에서 페이징 처리 객체를 바로 받을 수 있음
+            - page, size, sort
+    - QueryDSL
+        - JPA: 동적쿼리 짜기 힘듬
+        - SQL, JPQL을 코드로 작성할 수 있도록 도와주는 빌더 API
+        - JPA 크리테리아에 비해서 편리하고 실용적임
+        - 오픈소스
+        - SQL, JPQL의 문제점
+            - SQL, JPQL은 문자, Type-check 불가능
+            - 해당 로직 실해전까지 작동여부 확인 불가
+        - 문자가 아닌 코드로 작성
+        - 컴파일 시점에 문법 오류 발견
+        - 코드 자동완성 (IDE 도움)
+        - 단순하고 쉬움: 코드 모양이 JPQL과 거의 비슷
+        - 동적쿼리
+- 실무 경험 공유
+    - 테이블 중심에서 객체 중심으로 개발 패러다임이 변화
+    - 유연한 데이터베이스 변경의 장점과 테스트
+        - Junit 통합 테스트시에 H2 DB 메모리 모드
+        - 로컬 PC에는 H2 DB 서버 모드로 실행
+        - 개발 운영은 MySQL, Oracle
+    - 데이터베이스 변경 경험(개발 도중 MySQL -> Oracle 바뀐 적도 잇다.)
+    - 테스트, 통합 테스트시에 CRUD는 믿고 간다.
+    - 빠른 오류 발견
+        - 컴파일 시점!
+        - 늦어도 애플리케이션 로딩 시점
+    - (최소한 쿼리 문법 실수나 오류는 거의 발생하지 않는다.)
+    - 성능
+        - 대부분 비즈니스 로직 오류
+        - JPA 자체로 인한 성능 저하 이슈는 거의 없음.
+        - 성능 이슈 대부분은 JPA를 잘 이해하지 못해서 발생
+            - 즉시 로딩: 쿼리가 튐 -> 지연 로딩으로 변경
+                - 실무에서는 지연로딩이 좋음
+            - N+1 문제 -> 대부분 페치 조인으로 해결
+        - 내부 파서 문제: 2000줄 짜리 동적 쿼리 생성 1초
+            - 정적 쿼리로 변경 (하이버네이트는 파싱된 결과 재사용)
+    - 생산성
+        - 단순 코딩 시간 줄어듬 -> 개발 생산성 향상 -> 잉여 시간 발생
+        - 비즈니스 로직 작성시 흐름이 끊기지 않음
+        - 남는 시간에 더 많은 테스트 작성
+        - 남는 시간에 기술 공부
+        - 남는 시간에 코드 금칠
+        - 팀원 대부분 다시는 과거로 돌아가고 싶어하지 않음
