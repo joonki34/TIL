@@ -16,3 +16,4 @@ Cohesion refers to what the class (or module) will do. Low cohesion would mean t
 
 ## References
 <http://stackoverflow.com/questions/3085285/cohesion-coupling>
+<http://toby.epril.com/?p=727>
