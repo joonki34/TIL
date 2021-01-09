@@ -245,7 +245,7 @@ private final PartitionStates<TopicPartitionState> assignment;
 
 `Subscription` 클래스는 단순히 `assignment`의 상태를 대신 조회하거나 갱신함을 알 수 있다.
 
-더 상세하게 분석해볼 수 있겠지만 이쯤 되면 **Kafka Consumer가 offset commit을 실패하면 다음 poll할 때 실패하기 전의 offset을 기준으로 레코드를 다시 가져올까?**에 대한 답을 할 수 있다.
+더 상세하게 분석해볼 수 있겠지만 이쯤 되면 **Kafka Consumer가 offset commit을 실패하면 다음 poll할 때 실패하기 전의 offset을 기준으로 레코드를 다시 가져올까?** 에 대한 답을 할 수 있다.
 
 - `KafkaConsumer`는 자체적으로 offset 정보를 가지고 있지 않을 때 `Coordinator`에 조회하여 값을 내부에 저장하고 쓴다. 여기서 중요한 포인트는 값을 `poll()`할 때마다 갱신하지 않는다는 점이다.
 - `KafkaConsumer`는 `SubscriptionState`를 이용해 `TopicPartition` 단위로 현재의 offset position을 관리한다.
