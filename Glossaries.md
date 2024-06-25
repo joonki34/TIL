@@ -66,17 +66,6 @@ Representational state transfer. HTTP Method. SOAP 대체
 
 SPA에서는 js가 DOM를 그리기 때문에 이 현상이 더 두드러지게 나타남. Server-side rendering로 해결할 수 있음. 
 
-### CORS
-Cross-origin resource sharing. Same-origin policy는 document 혹은 script가 다른 origin의 resource에 접근하는 것을 막는 정책. JSONP 혹은 CORS로 해결할 수 있는데 CORS를 권장.
-
-CORS 통신 절차
-
-- OPTIONS로 해당 서버에 CORS 요청 가능한지 확인
-- 가능하면 실제 request 요청
-- 서버로부터 응답 수신 (Access-Control-Allow-Origin 같이 옴)
-
-<http://www.html5rocks.com/en/tutorials/cors/#toc-handling-a-not-so-simple-request>
-
 ### JSONP
 
 `<script>` 태그를 이용한 same-origin policy 우회법. 서버에서도 지원해줘야 함.
@@ -85,11 +74,6 @@ CORS 통신 절차
 
 ### Security through obscrutiny
 은닉을 통한 보안. 보안 방식을 공개하지 않음으로써 보안을 강화하는 방식. 좋은 방식으로 여기지지 않음.
-
-### Session vs. Cookie
-Sessions are server-side files that contain user information, while Cookies are client-side files that contain user information. Sessions have a unique identifier that maps them to specific users. This identifier can be passed in the URL or saved into a session cookie.
-
-Session cookie: a cookie that is erased when the user closes the Web browser.
 
 ### Framework vs. Library
 - Framework: 프레임워크가 내 코드를 call함. Inversion of Control
@@ -123,9 +107,6 @@ The Open Close Principle states that the design and writing of the code should b
 
 <http://www.oodesign.com/open-close-principle.html>
 
-### Continuous Integration
-팀의 구성원들이 자신들의 작업한 내용을 자주 통합(통상 최소 매 일 단위)하는 개발 지침.
-
 ### Blue Green Deployment
 한 머신에 웹 서버를 두개 띄워놓은 후 router가 둘 중 하나를 바라보게 함. 다음 버전을 배포할 때는 현재 idle 상태인 웹서버에 배포하고 router가 해당 서버를 바라보게 하도록 바꿔줌.
 
@@ -137,25 +118,49 @@ A declarative approach (WHAT): Table for two, please.
 
 The imperative approach is concerned with HOW you’re actually going to get a seat. You need to list out the steps to be able to show HOW you’re going to get a table. The declarative approach is more concerned with WHAT you want, a table for two.
 
-### Layout Thrashing
-Whenever the DOM is written to, the current layout is ‘invalidated,’ and will need to be reflowed. The browser usually waits to do this until the end of the current operation or frame. However, if we ask (via JavaScript) for geometric values before the current operation or frame is complete, the browser is forced to reflow the layout immediately. This is known as a ‘forced synchronous layout,’ and has the potential to be devastating to performance.
+### Domain driven design
+Domain: 해결하고자 하는 문제
 
-<https://afasterweb.com/2015/10/05/how-to-thrash-your-layout/>
+So the Domain is the world of the business, the Model is your solution and the Domain Model is the structured knowledge of the problem.
 
-##### Reflow
-A reflow computes the layout of the page. A reflow on an element recomputes the dimensions and position of the element, and it also triggers further reflows on that element’s children, ancestors and elements that appear after it in the DOM. Then it calls a final repaint. Reflowing is very expensive, but unfortunately it can be triggered easily.
+## HTTP
+
+### CORS
+Cross-origin resource sharing. Same-origin policy는 document 혹은 script가 다른 origin의 resource에 접근하는 것을 막는 정책. JSONP 혹은 CORS로 해결할 수 있는데 CORS를 권장.
+
+CORS 통신 절차
+
+- OPTIONS로 해당 서버에 CORS 요청 가능한지 확인
+- 가능하면 실제 request 요청
+- 서버로부터 응답 수신 (Access-Control-Allow-Origin 같이 옴)
+
+<http://www.html5rocks.com/en/tutorials/cors/#toc-handling-a-not-so-simple-request>
+
+### Session vs. Cookie
+Sessions are server-side files that contain user information, while Cookies are client-side files that contain user information. Sessions have a unique identifier that maps them to specific users. This identifier can be passed in the URL or saved into a session cookie.
+
+Session cookie: a cookie that is erased when the user closes the Web browser.
 
 ### URL Encoding
 Since URLs often contain characters outside the ASCII set, the URL has to be converted into a valid ASCII format.
 
 URL encoding replaces unsafe ASCII characters with a "%" followed by two hexadecimal digits.
 
-### Domain driven design
-Domain: 해결하고자 하는 문제
+### SNI
 
-So the Domain is the world of the business, the Model is your solution and the Domain Model is the structured knowledge of the problem.
+Server Name Indication의 약자. HTTPS를 사용할 때 하나의 서버(IP)에서 여러 호스트 이름 또는 도메인 이름(사람이 읽을 수 있는 웹 사이트 이름)을 지원할 수 있도록 지원하는 TLS 확장. SNI는 클라이언트 Hello 메시지 또는 TLS 핸드셰이크의 첫 번째 단계에 호스트 이름을 포함한다.
+
+<https://www.cloudflare.com/ko-kr/learning/ssl/what-is-sni/>
 
 ## HTML
+
+### Layout Thrashing
+Whenever the DOM is written to, the current layout is ‘invalidated,’ and will need to be reflowed. The browser usually waits to do this until the end of the current operation or frame. However, if we ask (via JavaScript) for geometric values before the current operation or frame is complete, the browser is forced to reflow the layout immediately. This is known as a ‘forced synchronous layout,’ and has the potential to be devastating to performance.
+
+<https://afasterweb.com/2015/10/05/how-to-thrash-your-layout/>
+
+#### Reflow
+A reflow computes the layout of the page. A reflow on an element recomputes the dimensions and position of the element, and it also triggers further reflows on that element’s children, ancestors and elements that appear after it in the DOM. Then it calls a final repaint. Reflowing is very expensive, but unfortunately it can be triggered easily.
 
 ## CSS
 
@@ -395,3 +400,32 @@ public ObjectMapper objectMapper() {
 - `@ContextConfiguration`: WebApplicationContext를 로드할 때 어떤 `@Configuration`과 컴포넌트를 로드할지 지정할 수 있는 어노테이션.
 - `@SpringApplicationConfiguration`: Spring Boot용 `@ContextConfiguration`. `@SpringBootTest` 등장으로 인해 deprecated.
 - `@SpringBootTest`: 위의 기능이 전부 들어있는 어노테이션. Spring Boot 1.4.0부터 사용 가능. [참고](http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html)
+
+## Data Structure
+
+### Rate Limiting
+
+- Leaky Bucket
+  - 장점: 고정된 처리율을 갖고 있어서 안정적 출력이 필요한 경우에 적합하다.
+  - 단점: 버스트 트래픽을 처리하지 못한다. 처리 속도가 늦으면 기존 요청을 처리하느라 새로운 요청들이 처리되지 못한다.
+- Token Bucket
+  - 장점: 버스트 트래픽을 처리할 수 있다. 구현이 쉽고 효율적이다. 
+  - 단점: 파라미터를 2개 조정해야 한다 (refill rate, bucket size)
+- Fixed Window
+  - 장점: 가장 간단하고 메모리 효율이 좋다.
+  - 단점: 윈도우 경계 시점에 트래픽 스파이크를 허용함
+- Sliding Window Log
+  - 요청의 타임스탬프를 추적한다. 만료된 타임스탬프는 제거한다.
+  - 장점: 정교하다. 
+  - 단점: 거부된 요청의 타임스탬프도 보관하기 때문에 다량의 메모리를 사용한다.
+- Sliding Window Counter
+  - Fixed Window + Sliding Window Log
+  - 장점: 가장 정확한 편이다. Sliding Window Log보다는 메모리 효율적이다.
+  - 단점: 구현하기 복잡하다. 이전 윈도우의 데이터가 갖고 있어야 함.
+- 참고: 가상 면접 사례로 배우는 대규머 시스템 설계 기초
+
+<https://etloveguitar.tistory.com/128>
+
+### Bloom Filter
+
+### Consistent Hashing
