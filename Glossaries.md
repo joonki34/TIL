@@ -2,9 +2,25 @@
 
 ## General
 
-### UTF-8 vs. Unicode
+### Unicode
 - Unicode: 컴퓨터에서 세계 각국의 언어를 통일된 방법으로 표현할 수 있게 제안된 국제적인 문자 코드 규약  
 - UTF-8: 유니코드를 위한 가변 길이 문자 인코딩 방식 중 하나. Sequences of bytes를 sequences of characters로 변환하는 방법 중 하나.
+- UTF-8 vs. UTF-16
+  - UTF-8: 코드 단위 8 bit / 유니코드 한 문자를 나타내기 위해 1byte ~ 4byte까지를 사용 / 영문 1 byte / 한글 3 byte
+  - UTF-16: 코드 단위 16 bit / 영문 2 byte / 한글 2 byte
+  - 어떤 CodePoint를 주로 사용하냐에 따라 UTF-8 또는 UTF-16을 선택하는 기준이 달라진다.
+  - <https://m.blog.naver.com/yjheum/221713176660>
+- BOM이란 문서 맨 앞에 눈에 보이지 않는 특정 바이트(byte)를 넣은 다음 이것을 해석해서 정확히 어떤 인코딩 방식이 사용되었는지 알아내는 방법을 나타낸다.
+  - UTF-8은 BOM이 하나로 고정된다. UTF-18, UTF-32 등은 Big Endian / Little Endian을 구분한다.
+  - UTF-16에서 0xFEFF이다. FE FF는 Big Endian, FF FE는 Little Endian이다. (순서만 바뀜)
+  - <https://brownbears.tistory.com/124>
+  - <https://dev-drive.tistory.com/9>
+- Big Endian vs. Little Endian
+  - Big Endian: 바이트를 순서대로 저장
+  - Little Endian: 바이트를 역순으로 저장. 인텔 계열(x86)에서 사용
+  - <https://softtone-someday.tistory.com/20>
+- JVM은 초기에는 UCS-2를 사용했지만 지금은 UTF-16을 사용한다.
+  - <https://lordofkangs.tistory.com/86>
 
 <http://stackoverflow.com/questions/643694/utf-8-vs-unicode/643713#643713>
 
