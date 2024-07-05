@@ -2,6 +2,20 @@
 
 ## General
 
+### SOLID
+- SRP (Single Responsibility Principle): A class should have one, and only one, reason to change.
+- OCP (Open/closed Principle): You should be able to extend a classes behavior, without modifying it.
+- LSP (Liskov Substitution Principle): Derived classes must be substitutable for their base classes.
+  - Derived classes should not change the behavior of the base class
+  - 서브 타입은 언제나 기반 타입으로 교체할 수 있어야 한다. 자식 클래스는 최소한 자신의 부모 클래스에서 가능한 행위는 수행이 보장되어야 한다.
+  - 직사각형 - 정사각형 관계
+- ISP (Interface Segregation Principle): Make fine grained interfaces that are client specific.
+  - 특정 클라이언트를 위한 인터페이스 여러 개가 범용 인터페이스 하나보다 낫다.
+- DIP (Dependency Inversion Principle): Depend on abstractions, not on concretions.
+  - 의존성 주입
+
+<https://blog.filippobuletto.info/solid-java/#>
+
 ### Unicode
 - Unicode: 컴퓨터에서 세계 각국의 언어를 통일된 방법으로 표현할 수 있게 제안된 국제적인 문자 코드 규약  
 - UTF-8: 유니코드를 위한 가변 길이 문자 인코딩 방식 중 하나. Sequences of bytes를 sequences of characters로 변환하는 방법 중 하나.
