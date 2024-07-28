@@ -25,7 +25,7 @@
   - 어떤 CodePoint를 주로 사용하냐에 따라 UTF-8 또는 UTF-16을 선택하는 기준이 달라진다.
   - <https://m.blog.naver.com/yjheum/221713176660>
 - BOM이란 문서 맨 앞에 눈에 보이지 않는 특정 바이트(byte)를 넣은 다음 이것을 해석해서 정확히 어떤 인코딩 방식이 사용되었는지 알아내는 방법을 나타낸다.
-  - UTF-8은 BOM이 하나로 고정된다. UTF-18, UTF-32 등은 Big Endian / Little Endian을 구분한다.
+  - UTF-8은 BOM이 하나로 고정된다. UTF-16, UTF-32 등은 Big Endian / Little Endian을 구분한다.
   - UTF-16에서 0xFEFF이다. FE FF는 Big Endian, FF FE는 Little Endian이다. (순서만 바뀜)
   - <https://brownbears.tistory.com/124>
   - <https://dev-drive.tistory.com/9>
@@ -62,8 +62,6 @@
 5. 웹 브라우저는 인증 기관의 공개키로 서버 인증서를 해독하여 검증한다.
 6. 이렇게 얻은 사이트 공개키로 대칭키를 암호화해서 보낸다.
 7. 사이트는 자신의 개인키로 암호문을 해독해서 대칭키를 얻고 암호문을 주고 받는다.
-
-<http://likelink.co.kr/14005>
 
 ### Anti-aliasing
 이미지의 가장자리를 흐리게 만들어서 더 부드럽게 보여주는 방식
@@ -121,9 +119,9 @@ Recursion할 때 이전의 결과값을 다음 recursive step에 전달하는 �
 
 <http://stackoverflow.com/questions/33923/what-is-tail-recursion>
 
-### i18n vs. L10n
+### i18n vs. l10n
 - i18n: 소프트웨어를 여러 나라 언어와 문화를 지원하기 쉬운 구조로 만드는 것
-- L10n: 소프트웨어를 특정 지역의 언어와 문화를 지원하도록 만드는 것이다. 예를 들면 중국어나 일본어를 지원하는 것.
+- l10n: 소프트웨어를 특정 지역의 언어와 문화를 지원하도록 만드는 것이다. 예를 들면 중국어나 일본어를 지원하는 것.
 
 ### MVC
 - Controller: The Controller's job is to translate incoming requests into outgoing responses. In order to do this, the controller must take request data and pass it into the Service layer.
@@ -131,11 +129,6 @@ Recursion할 때 이전의 결과값을 다음 recursive step에 전달하는 �
 - Model: The Model's job is to represent the problem domain, maintain state, and provide methods for accessing and mutating the state of the application.
 
 <http://www.bennadel.com/blog/2379-a-better-understanding-of-mvc-model-view-controller-thanks-to-steven-neiland.htm>
-
-### Open-closed principle
-The Open Close Principle states that the design and writing of the code should be done in a way that new functionality should be added with minimum changes in the existing code. The design should be done in a way to allow the adding of new functionality as new classes, keeping as much as possible existing code unchanged.
-
-<http://www.oodesign.com/open-close-principle.html>
 
 ### Blue Green Deployment
 한 머신에 웹 서버를 두개 띄워놓은 후 router가 둘 중 하나를 바라보게 함. 다음 버전을 배포할 때는 현재 idle 상태인 웹서버에 배포하고 router가 해당 서버를 바라보게 하도록 바꿔줌.
@@ -153,6 +146,14 @@ Domain: 해결하고자 하는 문제
 
 So the Domain is the world of the business, the Model is your solution and the Domain Model is the structured knowledge of the problem.
 
+### Kafka vs. RabbitMQ
+- pull vs. push
+- commit vs. ack
+- log vs. queue
+- durable vs. non-durable
+- RabbitMQ: retry, dead letter, priority, exchange
+- Kafka: scalable, high performant, hadoop ecosystem
+
 ## HTTP
 
 ### CORS
@@ -164,12 +165,16 @@ CORS 통신 절차
 - 가능하면 실제 request 요청
 - 서버로부터 응답 수신 (Access-Control-Allow-Origin 같이 옴)
 
-<http://www.html5rocks.com/en/tutorials/cors/#toc-handling-a-not-so-simple-request>
+<https://medium.com/swlh/how-cors-cross-origin-resource-sharing-works-79f959a84f0e>
 
 ### Session vs. Cookie
 Sessions are server-side files that contain user information, while Cookies are client-side files that contain user information. Sessions have a unique identifier that maps them to specific users. This identifier can be passed in the URL or saved into a session cookie.
 
 Session cookie: a cookie that is erased when the user closes the Web browser.
+
+SameSite (Strict/Lax/None), HttpOnly, Secure (HTTPS)
+
+session/persistent: 유효기간 없으면 session. 브라우저 닫힐 때 함께 삭제
 
 ### URL Encoding
 Since URLs often contain characters outside the ASCII set, the URL has to be converted into a valid ASCII format.
@@ -218,7 +223,7 @@ The Java virtual machine (JVM) calls the appropriate method for the object that 
 
 <https://docs.oracle.com/javase/tutorial/java/IandI/polymorphism.html>
 
-객체지향개념에서 다형성이란 '여러 가지 형태를 가질 수 있는 능력'을 의미하며 자바에서는 한 타입의 참조변수로 여러 타입의 객체를 참조할 수 있도록함으로써 다형성을 프로그램적으로 구현하였다.
+객체지향개념에서 다형성이란 '여러 가지 형태를 가질 수 있는 능력'을 의미하며 자바에서는 한 타입의 참조변수로 여러 타입의 객체를 참조할 수 있도록 함으로써 다형성을 프로그램적으로 구현하였다.
 
 ### hashCode() and equals()
 hashCode()는 HashTable/HashSet/HashMap에 쓰이는 key.  
@@ -324,8 +329,10 @@ Young 영역은 Eden 영역과 2개의 Survivor 영역, 총 3개의 영역으로
 #### Old 영역
 Old 영역은 기본적으로 데이터가 가득 차면 GC를 실행한다. GC 방식에서 처리 절차가 다 다르다.
 
-#####G1(Garbage First) GC
+##### G1(Garbage First) GC
 G1 GC는 바둑판의 각 영역에 객체를 할당하고 GC를 실행한다. 그러다가, 해당 영역이 꽉 차면 다른 영역에서 객체를 할당하고 GC를 실행한다. 즉, Young의 세가지 영역에서 데이터가 Old 영역으로 이동하는 단계가 사라진 GC 방식이라고 이해하면 된다. 기존에 있던 어떤 GC보다도 빠르다.
+
+CMS GC에 비해 조기 승격(Premature Promotion) 문제가 없다.
 
 참고: <http://d2.naver.com/helloworld/1329>
 
@@ -337,9 +344,11 @@ WeakReference로 객체를 감쌌을 경우, 해당 객체에 reachable한 객�
 A user cannot override static methods in Java, because method overriding is based upon dynamic binding at runtime and static methods are statically binded at compile time. 
 
 ### What is the difference between processes and threads?
-A process is an execution of a program, while a Thread is a single execution sequence within a process. A process can contain multiple threads. A Thread is sometimes called a lightweight process.
+A process is an execution of a program, while a thread is a single execution sequence within a process. A process can contain multiple threads. A thread is sometimes called a lightweight process.
 
-Both processes and threads are independent sequences of execution. The typical difference is that threads (of the same process) run in a shared memory space, while processes run in separate memory spaces.
+Both processes and threads are independent sequences of execution. **The typical difference is that threads (of the same process) run in a shared memory space**, while processes run in separate memory spaces.
+
+쓰레드는 메모리를 서로 공유하지만 스택은 별도로 갖고 있다.
 
 ### What is an Iterator?
 The Iterator interface provides a number of methods that are able to iterate over any Collection. Each Java Collection contains the iterator method that returns an Iterator instance. **Iterators are capable of removing elements from the underlying collection during the iteration.**
@@ -375,6 +384,9 @@ The servlet is a Java programming language class used to process client requests
 
 A non-static nested class has full access to the members of the class within which it is nested. A static nested class does not have a reference to a nesting instance, so a static nested class cannot invoke non-static methods or access non-static fields of an instance of the class within which it is nested.
 
+### Compiler
+- JIT: 실행 중에 바이트코드를 기계어로 변환. C1, C2 컴파일러
+
 ## Spring
 
 ### Bean
@@ -402,6 +414,10 @@ public void beforeTraceMethods(JoinPoint joinPoint) {
 ```
 
 여기에서 @Before가 advice, filteredTraceMethodsInDemoPackage()가 pointcut이다.
+
+### Spring AOP
+- Interface 기반: JDK Dynamic Proxy
+- Class 기반: CGLib (바이트코드 조작)
 
 ### fixedDelay vs. fixedRate
 - fixedDelay: 이전 수행이 종료된 시점부터 delay 후에 재호출 (long-polling에 사용하기도 함.)
@@ -458,4 +474,69 @@ public ObjectMapper objectMapper() {
 
 ### Bloom Filter
 
+- 아이템이 데이터 셋에 존재하는 여부를 효율적으로 알 수 있는 확률적 자료 구조
+- False Positive가 발생할 수 있다. 있다고 했지만 실제로는 없는 상태
+- 디스크 접근을 줄이고 메모리를 사용하기 위함. 적은 메모리 공간으로 많은 데이터의 존재 여부를 파악할 수 있다.
+- 3개의 서로 다른 hash 함수를 활용한다. 3개의 공간이 모두 할당된 상태면 존재한다고 가정 
+
+<https://docs.google.com/presentation/d/1V_-2HITLPZkzhtZxPaOakoXo4q8etpciryc4i1AN298/mobilepresent?pli=1&slide=id.p>
+
 ### Consistent Hashing
+
+- a technique used in computer systems to distribute keys (e.g., cache keys) uniformly across a cluster of nodes (e.g., cache servers)
+- virtual nodes
+
+## Docker & K8s
+
+### Docker
+- chroot: 루트 디렉터리 변경 (= 파일 시스템 분리)
+- namespaces: 프로세스 실행 시 시스템의 리소스 분리 (프로세스, 파일시스템, 네트워크)
+- cgroups: 자원 제어 (메모리, CPU)
+- 프로세스: ls 등의 명령어도 프로세스다.
+
+### K8s
+- Pod, Deployment, Service, Ingress
+- Master: API Server, Controller Manager, Scheduler, etcd
+- Node: Kubelet, Kube-proxy (network)
+- Pod: 최소 단위 리소스. 여러 개의 컨테이너로 구성
+- Kubelet: Service, Pod을 실행/중지하고 desired 상태를 유지시킨다.
+
+## Kotlin
+### lateinit vs. lazy
+- lateinit: var only
+- lazy: val only
+
+### Scope functions
+- let, run, with, apply, also
+
+## Database
+
+### 인덱스
+- Cardinality: 해당 컬럼의 중복된 수치. 카디널리티가 높은 것으로 인덱스를 잡아야 한다.
+- 커버링 인덱스: select절을 비롯해 order by, where 등 쿼리 내 모든 항목이 인덱스 컬럼으로만 이루어지게 하여 인덱스 내부에서 쿼리가 완성될 수 있도록 하는 방식. 데이터 페이지를 읽지 않음
+- Index range scan, Index full scan, Index unique scan, Table full scan
+- WHERE col1=10 ORDER BY col2, col3;
+- GROUP BY와 ORDER BY 절이 동시에 사용된 쿼리에서 두 절이 모두 하나의 인덱스를 사용해서 처리되려면 GROUP BY 절에 명시된 칼럼과 ORDER BY에 명시된 칼럼이 순서와 내용이 모두 같아야 한다
+
+<https://jojoldu.tistory.com/243>
+<https://jojoldu.tistory.com/529?category=637935>
+
+### MySQL Explain
+1. type
+  - const: 모든 컬럼에 대해 PK, 유니크 키 등 동등 조건으로 검색(반드시 1건의 레코드만 반환)
+  - ref: 동등 조건으로 검색(1건의 레코드만 반환된다는 보장이 없어도 됨)
+  - range: 인덱스 레인지 스캔
+  - index: 인덱스 풀 스캔. 반드시 효율적이지는 않음. 인덱스는 일반적으로 데이터 파일 전체보다 크기가 작으므로 인덱스 풀 스캔시 풀 테이블 스캔보다 빠르게 처리되며, 쿼리의 내용에 따라 정렬된 인덱스의 장점을 사용할 수 있기에 효율적이라 할 수 있다.
+2. key: 최종 선택된 실행 계획에서 사용되는 인덱스
+3. rows: 실행 계획의 효율성 판단을 위해 예측했던 레코드 건수. 쿼리를 처리하기 위해 얼마나 많은 레코드를 읽고 체크해야 하는지를 의미
+4. filtered: 필터링되고 남은 레코드의 비율. row가 4건, filtered가 33.33이면 필터링 되고 남은 레코드는 1.333건
+5. extra
+  - Using filesort: ORDER BY 처리가 인덱스를 사용하지 못할 때. 많은 부하를 일으키므로 가능하다면 쿼리를 튜닝하거나 인덱스를 생성하는 것이 좋음
+  - Using index: 데이터 파일을 전혀 읽지 않고 인덱스만 읽어서 쿼리를 모두 처리할 수 있는 경우 표시
+  - Using temporary: 쿼리를 처리하는 동안 중간 결과를 담아 두기 위해 임시 테이블(Temporary Table)을 생성하여 표시된 것을 의미한다.
+  - Using where: 스토리지 엔진으로 부터 받은 데이터를 MySQL 엔진에서 별도의 가공을 해서 필터링 작업을 처리한 경우 Extra 칼럼에 "Using where" 표시
+
+<https://zzang9ha.tistory.com/436>
+
+### MySQL
+- INT: 32 bit / BIGINT: 64 bit. INT(20)에서 20은 zerofill임
