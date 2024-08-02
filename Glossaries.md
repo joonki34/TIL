@@ -12,9 +12,16 @@
 - ISP (Interface Segregation Principle): Make fine grained interfaces that are client specific.
   - 특정 클라이언트를 위한 인터페이스 여러 개가 범용 인터페이스 하나보다 낫다.
 - DIP (Dependency Inversion Principle): Depend on abstractions, not on concretions.
-  - 의존성 주입
+  - 객체에서 어떤 Class를 참조해서 사용해야하는 상황이 생긴다면, 그 Class를 직접 참조하는 것이 아니라 그 대상의 상위 요소(추상 클래스 or 인터페이스)로 참조하라는 원칙
+  - Abstractions should not depend on details (concrete implementation).
 
 <https://blog.filippobuletto.info/solid-java/#>
+<https://velog.io/@harinnnnn/OOP-%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5-5%EB%8C%80-%EC%9B%90%EC%B9%99SOLID-%EB%A6%AC%EC%8A%A4%EC%BD%94%ED%94%84-%EC%B9%98%ED%99%98-%EC%9B%90%EC%B9%99-LSP#:~:text=%EB%A6%AC%EC%8A%A4%EC%BD%94%ED%94%84%20%EC%B9%98%ED%99%98%20%EC%9B%90%EC%B9%99%EC%9D%B4%EB%9E%80,%ED%95%A0%20%EC%88%98%20%EC%9E%88%EB%8B%A4%EB%8A%94%20%EC%9B%90%EC%B9%99%EC%9D%B4%EB%8B%A4.>
+
+### Design Patterns
+- 생성: 팩토리 메서드, 빌더, 싱글턴
+- 구조: 어댑터, 데코레이터, 퍼사드, 프록시, 복합체(Composite)
+- 행동: 옵저버, 전략, 템플릿 메서드, 비지터
 
 ### Unicode
 - Unicode: 컴퓨터에서 세계 각국의 언어를 통일된 방법으로 표현할 수 있게 제안된 국제적인 문자 코드 규약  
@@ -62,6 +69,28 @@
 5. 웹 브라우저는 인증 기관의 공개키로 서버 인증서를 해독하여 검증한다.
 6. 이렇게 얻은 사이트 공개키로 대칭키를 암호화해서 보낸다.
 7. 사이트는 자신의 개인키로 암호문을 해독해서 대칭키를 얻고 암호문을 주고 받는다.
+
+<https://vitalholic.tistory.com/368>
+
+### SSL Handshake
+- TCP Handshake 직후에 진행
+- ClientHello -> ServerHello/Certificate/Server Key Exchange -> Client Key Exchange -> ChangeCipherSpec
+- ClientHello: 사용 가능한 Cipher Suite 목록 전달. 암호화 프로토콜, 해시 방식 등
+- ServerHello: 선택한 Cipher Suite 전달
+- Certificate: Client에게 자신의 인증서 전달. CA의 개인키로 암호화된 서버 공개키
+- Client Key Exchange: Client가 대칭키를 생성하여 인증서에서 추출한 Server의 공개키를 암호화해서 Server에 전달
+- ChangeCipherSpec: 통신 준비 완료
+
+<https://aws-hyoh.tistory.com/39>
+
+### TCP
+- Handshake: SYN(Client) -> SYN/ACK -> ACK
+- Termination: FIN(Client) -> ACK -> FIN(Server) -> ACK
+  - TIME_WAIT: Client에서 마지막 Client ACK가 전달될 때까지 기다리는 시간 (기본 60초). 마지막으로 보내는 ACK 패킷의 유실이나 패킷의 지연 도착에 대비하기 위해 발생되는 상태
+  - CLOSE_WAIT: Server에서 FIN 받고 설정. Application의 연결 종료 프로세스가 완료되고 FIN 패킷을 보내기전 까지의 소켓 상태. 소켓이 CLOSE_WAIT 상태로 계속 남아있다면 Application에 문제가 있다는 신호로 인식하고 적절한 조치를 취해야 한다. 자연소멸되지 않음. 어플리케이션 서버에서 소켓 close 안할 때 혹은 부하가 너무 심할 때 주로 발생
+  - Active close / Passive Close
+
+<https://medium.com/@hyukjuner/%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EC%86%8C%EC%BC%93-%EC%83%81%ED%83%9C-time-wait-close-wait-21813a5c625>
 
 ### Anti-aliasing
 이미지의 가장자리를 흐리게 만들어서 더 부드럽게 보여주는 방식
@@ -130,9 +159,6 @@ Recursion할 때 이전의 결과값을 다음 recursive step에 전달하는 �
 
 <http://www.bennadel.com/blog/2379-a-better-understanding-of-mvc-model-view-controller-thanks-to-steven-neiland.htm>
 
-### Blue Green Deployment
-한 머신에 웹 서버를 두개 띄워놓은 후 router가 둘 중 하나를 바라보게 함. 다음 버전을 배포할 때는 현재 idle 상태인 웹서버에 배포하고 router가 해당 서버를 바라보게 하도록 바꿔줌.
-
 ### Imperative vs. Declarative Programming
 You arrive at Red Lobster, approach the front desk and say…
 
@@ -146,10 +172,14 @@ Domain: 해결하고자 하는 문제
 
 So the Domain is the world of the business, the Model is your solution and the Domain Model is the structured knowledge of the problem.
 
+- Bounded Context
+- Aggregate is a cluster of domain objects that can be treated as a single unit.
+- Aggregate Root is the mothership entity inside the aggregate. Aggregate roots are the only objects your client code loads from the repository.
+
 ### Kafka vs. RabbitMQ
 - pull vs. push
 - commit vs. ack
-- log vs. queue
+- log (WAL) vs. queue
 - durable vs. non-durable
 - RabbitMQ: retry, dead letter, priority, exchange
 - Kafka: scalable, high performant, hadoop ecosystem
@@ -329,7 +359,7 @@ Young 영역은 Eden 영역과 2개의 Survivor 영역, 총 3개의 영역으로
 #### Old 영역
 Old 영역은 기본적으로 데이터가 가득 차면 GC를 실행한다. GC 방식에서 처리 절차가 다 다르다.
 
-##### G1(Garbage First) GC
+#### G1(Garbage First) GC
 G1 GC는 바둑판의 각 영역에 객체를 할당하고 GC를 실행한다. 그러다가, 해당 영역이 꽉 차면 다른 영역에서 객체를 할당하고 GC를 실행한다. 즉, Young의 세가지 영역에서 데이터가 Old 영역으로 이동하는 단계가 사라진 GC 방식이라고 이해하면 된다. 기존에 있던 어떤 GC보다도 빠르다.
 
 CMS GC에 비해 조기 승격(Premature Promotion) 문제가 없다.
@@ -387,6 +417,15 @@ A non-static nested class has full access to the members of the class within whi
 ### Compiler
 - JIT: 실행 중에 바이트코드를 기계어로 변환. C1, C2 컴파일러
 
+### Heap Dump
+- Eclipse MAT 사용
+- XX:+HeapDumpOnOutOfMemoryError 로 OOM 발생시 자동 생성
+- jmap으로 수동 생성  
+
+### Thread Dump
+- NEW, RUNNABLE, BLOCKED, WAITING
+- jstack
+
 ## Spring
 
 ### Bean
@@ -395,7 +434,7 @@ A non-static nested class has full access to the members of the class within whi
 2) Spring beans are just object instances that are managed by the Spring container, namely, they are created and wired by the framework and put into a "bag of objects" (the container) from where you can get them later.
 
 ### Dependency Injection
-DI는 IoC의 한 종류.
+DI는 IoC의 한 종류. IoC는 프로그램 제어권을 역전시키는 개념이고, DI는 해당 개념을 구현하기 위해 사용하는 디자인 패턴 중 하나
 
 It is a process whereby objects define their dependencies, that is, the other objects they work with, only through constructor arguments, arguments to a factory method, or properties that are set on the object instance after it is constructed or returned from a factory method. The IoC container then injects those dependencies when it creates the bean.
 
@@ -446,6 +485,17 @@ public ObjectMapper objectMapper() {
 - `@ContextConfiguration`: WebApplicationContext를 로드할 때 어떤 `@Configuration`과 컴포넌트를 로드할지 지정할 수 있는 어노테이션.
 - `@SpringApplicationConfiguration`: Spring Boot용 `@ContextConfiguration`. `@SpringBootTest` 등장으로 인해 deprecated.
 - `@SpringBootTest`: 위의 기능이 전부 들어있는 어노테이션. Spring Boot 1.4.0부터 사용 가능. [참고](http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html)
+
+### 스프링 컨테이너
+- 스프링에서 자바 객체들을 관리하는 공간
+- 컨테이너는 크게 두 종류로 나눌 수 있다. 하나는 BeanFactory이고, 다른 하나는 ApplicationContext이다.
+
+### JPA
+- Entity: no-argument constructor, equals, hashcode가 구현되어있어야 한다.
+- Kotlin에서는 data class로 선언할 수 없다. Lazy association을 못한다.
+- `@DynamicUpdate`로 변경 필드만 DB에 반영되게 할 수 있다. Update query 효율 관점
+- 스냅샷: 엔티티를 영속성 컨텍스트에 보관할 때, 최초 상태를 복사해서 저장해두는 것
+- Dirty Checking (변경감지): 플러시 시점에 스냅샷과 엔티티를 비교해서 변경된 엔티티를 찾는다. 각 컬럼들을 equals/hashCode로 비교한다.
 
 ## Data Structure
 
@@ -540,3 +590,32 @@ public ObjectMapper objectMapper() {
 
 ### MySQL
 - INT: 32 bit / BIGINT: 64 bit. INT(20)에서 20은 zerofill임
+
+### 파티셔닝 vs. 샤딩
+- 파티셔닝은 매우 큰 테이블을 여러개의 테이블로 분할하는 작업이다. Range, Hash 등의 기법이 있다.
+- 샤딩은 동일한 스키마를 가지고 있는 여러대의 데이터베이스 서버들에 데이터를 작은 단위로 나누어 분산 저장하는 기법이다.
+
+### 비관적 락 vs. 낙관적 락
+- 낙관적 락: 여러 쿼리를 묶어서 실행해야하는 경우에는 롤백을 직접 처리해야 함
+
+### Prepared Statement
+- 쿼리 분석(파싱)이나 최적화의 일부 작업을 처음 한 번만 수행해 별도로 저장해 두고, 다음부터 요청되는 쿼리는 저장된 분석 결과를 재사용한다. 분석 정보를 MySQL 서버의 메모리에 저장해둔다 (캐싱).
+- SQL 인젝션을 쉽게 예방해줄 수 있는 효과가 있음
+- 파라미터에 ? 붙어서 DB 쿼리 캐시에 저장됨
+- JDBC는 기본적으로 client-side가 디폴트임. `useServerPrepStmts=true`로 해야 server-side 모드 적용됨
+- PREPARE -> EXECUTE 단계로 수행됨. PREPARE 단계에서 서버는 쿼리를 캐시하고 클라이어트에 주소(해시 값)을 전달
+- 바이너리 프로토콜 사용
+
+<https://vladmihalcea.com/mysql-jdbc-statement-caching/>
+
+### 클러스터링 인덱스
+- PK 값이 비슷한 레코드끼리 묶어서 저장하는 것을 클러스터링 인덱스라고 표현한다. PK가 변경되면 그 레코드의 물리적인 저장 위치가 바뀌어야 한다.
+- 인덱스 알고리즘이라기보다 테이블 레코드의 저장 방식이라고 볼수 있다.
+- PK가 없는 테이블은 일련의 규칙을 통해 PK를 대체할 컬럼을 선택해서 클러스터링 인덱스를 구성한다.
+
+### 커버링 인덱스
+- 쿼리를 충족시키는 데 필요한 모든 데이터를 갖고 있는 인덱스를 커버링 인덱스 (Covering Index 혹은 Covered Index) 라고 한다.
+- 즉, SELECT, WHERE, ORDER BY, GROUP BY 등에 사용되는 모든 컬럼이 인덱스의 구성요소인 경우를 얘기한다.
+- 커버링 인덱스가 적용되면 EXPLAIN 결과 (실행 계획) 의 Extra 필드에 "Using index" 가 표기된다.
+
+<https://jojoldu.tistory.com/476>
